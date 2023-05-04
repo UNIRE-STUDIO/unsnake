@@ -39,19 +39,28 @@ buttonRestart.onclick = function () {
     game.startGame();
 }
 
+var uagent = navigator.userAgent.toLowerCase();
+
 // ЗАГРУЗКА ДОКУМЕНТА ..........................................
 document.addEventListener('DOMContentLoaded', function() {
 
-     // Внутренний размер окна — это ширина и высота области просмотра (вьюпорта).
-    console.log(window.innerHeight); 
-
-    // Адаптивно меняем размер канваса
-    if (window.innerHeight < 600){
-        canvas.height = 304;
+    if (uagent.search("android") > -1){
+        gamepad.style.display = "flex";
+        canvas.width = window.innerWidth-100;
+        config.grid = 32;
     }
-    if (window.innerWidth < 544) canvas.width = 448;
-    else if (window.innerWidth < 600) canvas.width = 496;
-    else if (window.innerWidth < 700) canvas.width = 544;
+    else{
+        // Внутренний размер окна — это ширина и высота области просмотра (вьюпорта).
+        console.log(window.innerHeight); 
+
+        // Адаптивно меняем размер канваса
+        if (window.innerHeight < 600){
+            canvas.height = 304;
+        }
+        if (window.innerWidth < 544) canvas.width = 448;
+        else if (window.innerWidth < 600) canvas.width = 496;
+        else if (window.innerWidth < 700) canvas.width = 544;
+    }
 
     document.getElementById("size-map").innerHTML = canvas.width/16 + "x" + canvas.height/16
 
@@ -65,28 +74,23 @@ var gamepad = document.getElementById("gamepadCont");
 
 var LeftButton = document.getElementById("left"); 
 LeftButton.ontouchstart = function() {
-    control.snakeDirection(0);
+    control.dir = 1;
 }
 
 var UpButton = document.getElementById("up"); 
 UpButton.ontouchstart = function() {
-    control.snakeDirection(1);
+    control.dir = 2;
 }
 
 var RightButton = document.getElementById("right"); 
 RightButton.ontouchstart = function() {
-    control.snakeDirection(2);
+    control.dir = 3;
 }
 
 var DownButton = document.getElementById("down"); 
 DownButton.ontouchstart = function() {
-    control.snakeDirection(3);
+    control.dir = 4;
 }
-
-var uagent = navigator.userAgent.toLowerCase();
-       if (uagent.search("android") > -1){
-            gamepad.style.display = "flex";
-       }
 
 // Отлавливаев клики мышкой
 document.addEventListener('click', function(evt) {
