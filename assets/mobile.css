@@ -10,18 +10,13 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    
-}
-
-#shadow-game{
-    
 }
 
 #game {
-    padding: 10px 20px 10px 20px;
+    padding: 200px 20px 10px 20px;
     background-color: #161618;
-    box-shadow: 0px -1px 0 #ac0513 inset, 0px 0px 40px 10px #161618;
-    border-radius: 9px;
+    width: 100vw;
+    height: 100vh;
 }
 
 .game-header {
@@ -31,7 +26,7 @@ body{
     display: flex;
     justify-content: space-between;
     color: #ffffff;
-    height: 50;
+    height: 90;
 }
 
 .hud {
@@ -57,12 +52,12 @@ body{
 }
 
 #pause {
-    width: 55;
-    height: 35;
-    font-size: 16;
+    width: 100;
+    height: 80;
+    font-size: 40;
     border: none;
     outline: none;
-    border-radius: 10px;
+    border-radius: 20px;
     background: #101013;
     color: #c2c2c2;
     -moz-user-select: none;    -o-user-select: none;    -khtml-user-select: none;    -webkit-user-select: none;    user-select: none;
@@ -76,15 +71,16 @@ body{
     cursor: pointer;
 }
 
-#myCanvas {
-    display: block;
-    border-radius: 5px;
+.canvas-wrapper {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48' fill='none'%3E%3Ccircle cx='24' cy='24' r='8' fill='%23444444'/%3E%3C/svg%3E");
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.canvas-wrapper {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Ccircle cx='8' cy='8' r='1' fill='%23444444'/%3E%3C/svg%3E"),
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48' fill='none'%3E%3Ccircle cx='8' cy='8' r='3' fill='%23444444'/%3E%3C/svg%3E");
-    position: relative;
+#myCanvas {
+
 }
 
 #continue {
@@ -141,6 +137,44 @@ body{
     box-shadow:0px -4px 0 #ac0513 inset;
 }
 
+/* GAMEPAD *************************** */
+#gamepadCont{
+    display: flex;
+    justify-content: center;
+}
+
+#gamepad{
+    margin: 50px;
+    width: 360px;
+    height: 360px;
+
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+}
+
+#horizontal{
+    border: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.gamepadbutton{
+    border: none;
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+
+    border-radius: 20px;
+    background: #101013;
+    box-shadow:0px -2px 0 #ac0513 inset;
+    color: #b4b4b4;
+    font-size: 30;
+}
+
+
 .footer {
     margin-top: 5px;
     display: flex;
@@ -154,8 +188,4 @@ body{
 
 #size-map {
     font-size: 12px;
-}
-
-#gamepadCont{
-    display: none;
 }

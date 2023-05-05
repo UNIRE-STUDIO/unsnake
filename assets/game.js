@@ -45,9 +45,7 @@ var uagent = navigator.userAgent.toLowerCase();
 document.addEventListener('DOMContentLoaded', function() {
 
     if (uagent.search("android") > -1){
-        gamepad.style.display = "flex";
-        canvas.width = window.innerWidth-100;
-        config.grid = 32;
+       config.updateConfigForAndroid();         //  Меняем настройки под мобильный телефон
     }
     else{
         // Внутренний размер окна — это ширина и высота области просмотра (вьюпорта).
@@ -171,11 +169,17 @@ var game = {
         scoreCounter.innerHTML = "" + game.score;
         buttonPause.style.display = "block";
         gameOverPanel.style.display = "none";
+        if (localStorage.getItem('record') == null) localStorage.setItem('record', 0);
+        recordCounter.innerHTML = "РЕКОРД: " + localStorage.getItem('record');
     },
     addScore(){
         food.spawn();
         game.score++;
         scoreCounter.innerHTML = "" + game.score;
+        if (game.score > localStorage.getItem('record')){
+            localStorage.setItem('record', game.score);
+            recordCounter.innerHTML = "РЕКОРД: " + game.score;
+        }
     },
     gameOver(){
         buttonPause.style.display = "none";
@@ -185,7 +189,14 @@ var game = {
 }
 
 var config = {
-    grid: 16 // Размер сетки по которой мы строим змейку и перемещаем её
+    grid: 16, // Размер сетки по которой мы строим змейку и перемещаем её
+    
+    updateConfigForAndroid(){
+        glManager.ms_per_update = 166;
+        config.grid = 48;
+        canvas.width = Math.floor((window.innerWidth)/config.grid) * config.grid-config.grid;
+        canvas.height = Math.floor(((window.innerHeight*60)/100)/config.grid) * config.grid;
+    }
 }
 
 // Структруа змейки

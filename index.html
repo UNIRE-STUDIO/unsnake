@@ -2,7 +2,26 @@
     <head>
         <meta charset="utf-8"/>
         <title>UnSnake</title>
-        <link rel="stylesheet" href="assets/main.css">
+        <script>
+            let cssId = 'myCss';  // you could encode the css path itself to generate id..
+            const main = 'assets/main.css';
+            const mobileStyle = 'assets/mobile.css';
+
+            // В зависимости от устройства подключаем разные таблицы стилей
+            var uagent = navigator.userAgent.toLowerCase();
+            let currentStyle = (uagent.search("android") > -1) ? mobileStyle : main;
+            if (!document.getElementById(cssId))
+                {
+                    var head  = document.getElementsByTagName('head')[0];
+                    var link  = document.createElement('link');
+                    link.id   = cssId;
+                    link.rel  = 'stylesheet';
+                    link.type = 'text/css';
+                    link.href = currentStyle;
+                    link.media = 'all';
+                    head.appendChild(link);
+                }
+        </script>
         <!--Запретить масштабирование-->
         <meta name="viewport" content="user-scalable=no">
     </head>
