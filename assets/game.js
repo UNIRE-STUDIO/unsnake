@@ -131,28 +131,26 @@ var control =  {
         if (control.dir === 0) return;
 
         if (control.dir === 1 && snake.direction.x === 0){ // Кнопка влево нажата и змейка не перемещается
-            snake.direction.x = -config.grid;                      // по горизонтали
+            snake.direction.x = -config.stepOfMovementSnake;                      // по горизонтали
             snake.direction.y = 0;
         }
         else if (control.dir === 2 && snake.direction.y === 0){ // Кнопка вверх и змейка не перемещается по верт.
             snake.direction.x = 0;
-            snake.direction.y = -config.grid;
+            snake.direction.y = -config.stepOfMovementSnake;
         }
         else if (control.dir === 3 && snake.direction.x === 0){ // Кнопка вправо и змейка не перемещается 
-            snake.direction.x = config.grid;                            // по горизонтали
+            snake.direction.x = config.stepOfMovementSnake;                            // по горизонтали
             snake.direction.y = 0;
         }
         else if (control.dir === 4 && snake.direction.y === 0){ // Кнопка вниз и змейка не перемещается по верт.
             snake.direction.x = 0;
-            snake.direction.y = config.grid;
+            snake.direction.y = config.stepOfMovementSnake;
         }
         control.dir = 0;
     }
 }
 
 var game = {
-    delay: 7,         // количество пропускаемых кадров + 1
-    counterDelay: 0, // Счетчик пропускаемых кадров
     score: 0,
     isPause: false,
     
@@ -189,7 +187,8 @@ var game = {
 }
 
 var config = {
-    grid: 16, // Размер сетки по которой мы строим змейку и перемещаем её
+    grid: 16, // Размер сетки по которой мы строим змейку
+    stepOfMovementSnake: 16, // Шаг движения змейки
     
     updateConfigForAndroid(){
         glManager.ms_per_update = 166;
@@ -203,7 +202,7 @@ var config = {
 var snake = { 
 
     position: {x:0, y:0},
-    direction: {x:config.grid, y: 0},
+    direction: {x:config.stepOfMovementSnake, y: 0},
     cells: [],
     countCells: 3,
     startCountCells: 3,
@@ -214,20 +213,20 @@ var snake = {
 
         // Если ушли за край тогда телепортируем змейку
         if (snake.position.x < 0){ 
-            snake.position.x = canvas.width - config.grid;
+            snake.position.x = canvas.width - config.stepOfMovementSnake;
         }
         else if (snake.position.x >= canvas.width){
             snake.position.x = 0;
         }
         if (snake.position.y < 0){
-            snake.position.y = canvas.height - config.grid;
+            snake.position.y = canvas.height - config.stepOfMovementSnake;
         }
         else if (snake.position.y >= canvas.height){
             snake.position.y = 0;
         }
-
         // Добавляет новый элемент массива в новую координату текущего положения змейки
         snake.cells.unshift({x: snake.position.x, y: snake.position.y});
+        
 
         // Если длина змейки привысила заданную (она по сути бесконечно растёт в направлении движения)
         // то удаляем последний элемент массива
@@ -258,10 +257,10 @@ var snake = {
     },
 
     resetToStart(){
-        snake.position = {x:160, y:160};
+        snake.position = {x:0, y:0};
         snake.cells = [];
         snake.countCells = this.startCountCells;
-        snake.direction = {x:config.grid, y:0};
+        snake.direction = {x:config.stepOfMovementSnake, y:0};
     },
 
     // Отрисовка змейки
@@ -308,8 +307,11 @@ var glManager = {
     currentTime: 0,
     pervious: Date.now(),
     lag: 0.0,
+    frames: 0,
 
     gameLoop(){
+        if (glManager.frames == 10000) glManager.frames = 0;
+
         // Текущее вермя
         glManager.currentTime = Date.now();
         glManager.elapsed = glManager.currentTime - glManager.pervious; // Время между предыдущим и текущим кадром
@@ -343,7 +345,13 @@ var glManager = {
 
 function update() {
     if (game.isPause) return;
-    control.snakeDirection();
+
+    // Обновляем направление движения змейки только каждый второй кадр
+    if (snake.position.x % config.grid == 0 
+        && snake.position.y % config.grid == 0){
+        control.snakeDirection();
+    }
+
     snake.update();
 }
 
