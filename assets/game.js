@@ -204,12 +204,27 @@ var snake = {
     position: {x:0, y:0},
     direction: {x:config.stepOfMovementSnake, y: 0},
     cells: [],
-    countCells: 3,
-    startCountCells: 3,
+    startCountCells: 2,
     
     update(){
-        snake.position.x += snake.direction.x; // Двигаем змейку в направлении движения
+        
+        // Двигаем змейку в направлении движения
+        for (let i = snake.cells.length-1; i > 0; i--) {
+            console.log(i);
+            snake.cells[i] = snake.cells[i-1];
+        }
+
+        snake.position.x += snake.direction.x; 
         snake.position.y += snake.direction.y;
+
+        snake.cells[0] = snake.position;
+
+
+        /*
+        snake.cells[2] =  snake.cells[1];
+        snake.cells[1] =  {x:snake.position.x, y:snake.position.y};
+        */
+
 
         // Если ушли за край тогда телепортируем змейку
         if (snake.position.x < 0){ 
@@ -224,17 +239,8 @@ var snake = {
         else if (snake.position.y >= canvas.height){
             snake.position.y = 0;
         }
-        // Добавляет новый элемент массива в новую координату текущего положения змейки
-        snake.cells.unshift({x: snake.position.x, y: snake.position.y});
         
-
-        // Если длина змейки привысила заданную (она по сути бесконечно растёт в направлении движения)
-        // то удаляем последний элемент массива
-        // Добавляем хвостик ПОСЛЕ (через одну итерацию) того, как мы скушали яблоко
-        if (snake.cells.length > snake.countCells){
-            snake.cells.pop();
-        }
-        snake.checkCollision();
+        //snake.checkCollision();
     },
 
     checkCollision(){
@@ -242,7 +248,6 @@ var snake = {
         snake.cells.forEach(function (cell, index){
 
             if (cell.x == food.position.x && cell.y == food.position.y){
-                snake.countCells++;
                 game.addScore();
             }
 
@@ -257,9 +262,12 @@ var snake = {
     },
 
     resetToStart(){
-        snake.position = {x:0, y:0};
+        snake.position = {x:192, y:192};
         snake.cells = [];
-        snake.countCells = this.startCountCells;
+        for (let i = 0; i < snake.startCountCells; i++) {
+            // Добавляет новый элемент массива в новую координату текущего положения змейки
+            snake.cells.unshift({x: snake.position.x - (config.grid * i), y: snake.position.y});
+        }
         snake.direction = {x:config.stepOfMovementSnake, y:0};
     },
 
@@ -277,13 +285,13 @@ var snake = {
             }
         });
 
-        // Указываем актуальное положение для отрисовки
+        // Рисуем голову змейки
         var drawPos = {x:snake.position.x, y:snake.position.y};
         drawRect(drawPos, {x:config.grid, y:config.grid}, '#ac0510');
     }
 };
 
-// Структруа яблокаs
+// Структруа яблока
 var food = {
     position: {x:0,y:0},
 
@@ -301,7 +309,7 @@ var food = {
 // ИГРОВОЙ ЦИКЛ ................................................................
 
 var glManager = {
-    ms_per_update: 125,    // Интервал между вычислениями
+    ms_per_update: 500,    // Интервал между вычислениями
     fps: 0,
     elapsed: 0,            // Счетчик времени между кадрами
     currentTime: 0,
