@@ -188,7 +188,7 @@ var game = {
 
 var config = {
     grid: 16, // Размер сетки по которой мы строим змейку
-    stepOfMovementSnake: 16, // Шаг движения змейки
+    stepOfMovementSnake: 8, // Шаг движения змейки
     
     updateConfigForAndroid(){
         glManager.ms_per_update = 166;
@@ -204,27 +204,30 @@ var snake = {
     position: {x:0, y:0},
     direction: {x:config.stepOfMovementSnake, y: 0},
     cells: [],
-    startCountCells: 2,
+    startCountCells: 10,
+
+    resetToStart(){
+        snake.position = {x:192, y:192};
+        snake.cells = [];
+        for (let i = 0; i < snake.startCountCells; i++) {
+            // Добавляет новый элемент массива в новую координату текущего положения змейки
+            snake.cells.push({x: snake.position.x - (config.grid * i), y: snake.position.y});
+        }
+        snake.direction = {x:config.stepOfMovementSnake, y:0};
+    },
     
-    update(){
-        
+    update(){        
         // Двигаем змейку в направлении движения
         for (let i = snake.cells.length-1; i > 0; i--) {
-            console.log(i);
-            snake.cells[i] = snake.cells[i-1];
+            let subX = snake.cells[i-1].x - snake.cells[i].x;
+            let subY = snake.cells[i-1].y - snake.cells[i].y;
+            snake.cells[i] = {x:snake.cells[i].x + (subX), y:snake.cells[i].y + (subY)};
         }
 
         snake.position.x += snake.direction.x; 
         snake.position.y += snake.direction.y;
 
-        snake.cells[0] = snake.position;
-
-
-        /*
-        snake.cells[2] =  snake.cells[1];
-        snake.cells[1] =  {x:snake.position.x, y:snake.position.y};
-        */
-
+        snake.cells[0] = {x: snake.position.x, y: snake.position.y};
 
         // Если ушли за край тогда телепортируем змейку
         if (snake.position.x < 0){ 
@@ -240,7 +243,7 @@ var snake = {
             snake.position.y = 0;
         }
         
-        //snake.checkCollision();
+        snake.checkCollision();
     },
 
     checkCollision(){
@@ -261,15 +264,6 @@ var snake = {
         });
     },
 
-    resetToStart(){
-        snake.position = {x:192, y:192};
-        snake.cells = [];
-        for (let i = 0; i < snake.startCountCells; i++) {
-            // Добавляет новый элемент массива в новую координату текущего положения змейки
-            snake.cells.unshift({x: snake.position.x - (config.grid * i), y: snake.position.y});
-        }
-        snake.direction = {x:config.stepOfMovementSnake, y:0};
-    },
 
     // Отрисовка змейки
     render(){
@@ -298,7 +292,7 @@ var food = {
     spawn (){
         food.position.x = randomRange(0,canvas.width/config.grid) * config.grid;
         food.position.y = randomRange(0,canvas.height/config.grid) * config.grid;
-        console.log(food.position.x + ", " + food.position.y);
+        console.log("Food position: " + food.position.x + ", " + food.position.y);
     },
     
     render (){
@@ -309,7 +303,7 @@ var food = {
 // ИГРОВОЙ ЦИКЛ ................................................................
 
 var glManager = {
-    ms_per_update: 500,    // Интервал между вычислениями
+    ms_per_update: 62,    // Интервал между вычислениями
     fps: 0,
     elapsed: 0,            // Счетчик времени между кадрами
     currentTime: 0,
