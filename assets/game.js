@@ -205,7 +205,7 @@ var snake = {
     direction: {x:config.stepOfMovementSnake, y: 0},
     cells: [],
     startCountCells: 10,
-
+    countCells: 0,
     resetToStart(){
         snake.position = {x:192, y:192};
         snake.cells = [];
@@ -213,10 +213,14 @@ var snake = {
             // Добавляет новый элемент массива в новую координату текущего положения змейки
             snake.cells.push({x: snake.position.x - (config.grid * i), y: snake.position.y});
         }
+        snake.countCells = snake.cells.length;
         snake.direction = {x:config.stepOfMovementSnake, y:0};
     },
     
-    update(){        
+    update(){
+
+
+
         // Двигаем змейку в направлении движения
         for (let i = snake.cells.length-1; i > 0; i--) {
             let subX = snake.cells[i-1].x - snake.cells[i].x;
