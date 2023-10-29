@@ -188,7 +188,7 @@ var game = {
 
 var config = {
     grid: 16, // Размер сетки по которой мы строим змейку
-    stepOfMovementSnake: 8, // Шаг движения змейки
+    stepOfMovementSnake: 16, // Шаг движения змейки
     
     updateConfigForAndroid(){
         glManager.ms_per_update = 166;
@@ -218,20 +218,8 @@ var snake = {
     },
     
     update(){
-
-
-
-        // Двигаем змейку в направлении движения
-        for (let i = snake.cells.length-1; i > 0; i--) {
-            let subX = snake.cells[i-1].x - snake.cells[i].x;
-            let subY = snake.cells[i-1].y - snake.cells[i].y;
-            snake.cells[i] = {x:snake.cells[i].x + (subX), y:snake.cells[i].y + (subY)};
-        }
-
         snake.position.x += snake.direction.x; 
         snake.position.y += snake.direction.y;
-
-        snake.cells[0] = {x: snake.position.x, y: snake.position.y};
 
         // Если ушли за край тогда телепортируем змейку
         if (snake.position.x < 0){ 
@@ -245,6 +233,16 @@ var snake = {
         }
         else if (snake.position.y >= canvas.height){
             snake.position.y = 0;
+        }
+
+        // Добавляет новый элемент массива в новую координату текущего положения змейки
+        snake.cells.unshift({x: snake.position.x, y: snake.position.y});
+
+        // Если длина змейки привысила заданную (она по сути бесконечно растёт в направлении движения)
+        // то удаляем последний элемент массива
+        // Добавляем хвостик ПОСЛЕ (через одну итерацию) того, как мы скушали яблоко
+        if (snake.cells.length > snake.countCells){
+            snake.cells.pop();
         }
         
         snake.checkCollision();
@@ -271,6 +269,7 @@ var snake = {
 
     // Отрисовка змейки
     render(){
+        
         snake.cells.forEach(function (cell, index){
             if (index == 0) return; // Голову мы отрисовываем отдельно, поэтому пропускаем
             
@@ -307,7 +306,7 @@ var food = {
 // ИГРОВОЙ ЦИКЛ ................................................................
 
 var glManager = {
-    ms_per_update: 62,    // Интервал между вычислениями
+    ms_per_update: 100,    // Интервал между вычислениями
     fps: 0,
     elapsed: 0,            // Счетчик времени между кадрами
     currentTime: 0,
