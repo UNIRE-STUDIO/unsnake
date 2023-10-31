@@ -147,6 +147,7 @@ var control =  {
             snake.direction.y = config.stepOfMovementSnake;
         }
         control.dir = 0;
+        control.snakeDirection();
     }
 }
 
@@ -206,6 +207,7 @@ var snake = {
     cells: [],
     startCountCells: 10,
     countCells: 0,
+    roundRect: 5,
     resetToStart(){
         snake.position = {x:192, y:192};
         snake.cells = [];
@@ -269,22 +271,37 @@ var snake = {
 
     // Отрисовка змейки
     render(){
-        
-        snake.cells.forEach(function (cell, index){
-            if (index == 0) return; // Голову мы отрисовываем отдельно, поэтому пропускаем
-            
-            if (index % 2)
-            {
+        if (!glManager.isBlockIntermediateFrame){
+            snake.cells.forEach(function (cell, index){
+                if (index == 0) return; // Голову мы отрисовываем отдельно, поэтому пропускаем
                 drawRect(cell, {x:config.grid, y:config.grid}, '#850009');
-            }
-            else{
-                drawRect(cell, {x:config.grid, y:config.grid}, '#850009');
-            }
-        });
+            });
+    
+            // Рисуем голову змейки
+            var drawPos = {x:snake.position.x, y:snake.position.y};
+            drawRoundRect(drawPos, {x:config.grid, y:config.grid}, snake.roundRect, '#ac0510');
+        }
+        else
+        {
+            var halfFrame = glManager.ms_per_update/glManager.lag;
 
-        // Рисуем голову змейки
-        var drawPos = {x:snake.position.x, y:snake.position.y};
-        drawRect(drawPos, {x:config.grid, y:config.grid}, '#ac0510');
+            // Расчитываем интерполяцию            // Какая часть времени кадра прошла на данный момент
+            var interpolationX = snake.direction.x/halfFrame;
+            var interpolationY = snake.direction.y/halfFrame;
+            
+
+            snake.cells.forEach(function (cell, index){
+                if (index == 0) return; // Голову мы отрисовываем отдельно, поэтому пропускаем
+                    var newPosX = snake.cells[index-1].x - cell.x;
+                    var newPosY = snake.cells[index-1].y - cell.y;
+                    drawRoundRect({x: cell.x + newPosX / halfFrame, y: cell.y + newPosY / halfFrame}, {x:config.grid, y:config.grid}, snake.roundRect, '#850009');
+            });
+
+            // Рисуем голову змейки
+            var drawPos = {x:snake.position.x + interpolationX, y:snake.position.y + interpolationY};
+            drawRoundRect(drawPos, {x:config.grid, y:config.grid}, snake.roundRect, '#ac0510');
+        }
+        
     }
 };
 
@@ -306,13 +323,14 @@ var food = {
 // ИГРОВОЙ ЦИКЛ ................................................................
 
 var glManager = {
-    ms_per_update: 100,    // Интервал между вычислениями
+    ms_per_update: 1000,    // Интервал между вычислениями
     fps: 0,
     elapsed: 0,            // Счетчик времени между кадрами
     currentTime: 0,
     pervious: Date.now(),
     lag: 0.0,
     frames: 0,
+    isBlockIntermediateFrame: false,
 
     gameLoop(){
         if (glManager.frames == 10000) glManager.frames = 0;
@@ -322,11 +340,16 @@ var glManager = {
         glManager.elapsed = glManager.currentTime - glManager.pervious; // Время между предыдущим и текущим кадром
         glManager.pervious = glManager.currentTime;             // Сохраняем время текущего кадра
         glManager.lag += glManager.elapsed;                     // Суммированное время между кадрами
-        if (glManager.lag < glManager.ms_per_update){           // Если процессор обработал быстрее чем нужно, то пропускаем вычисления
+        
+        // Если процессор обработал быстрее чем нужно, то пропускаем вычисления
+        if (glManager.lag < glManager.ms_per_update){
+            glManager.isBlockIntermediateFrame = true;
+            render();
             requestAnimFrame(glManager.gameLoop);
             return;
         }
-
+        glManager.isBlockIntermediateFrame = false;
+        
         // Сохраняем лаг, т.е время с предыдущего РАБОЧЕГО кадра (для подсчета ФПС)
         // Так-как потом мы изменяем glManager.lag
         var curLag = glManager.lag;
@@ -350,13 +373,6 @@ var glManager = {
 
 function update() {
     if (game.isPause) return;
-
-    // Обновляем направление движения змейки только каждый второй кадр
-    if (snake.position.x % config.grid == 0 
-        && snake.position.y % config.grid == 0){
-        control.snakeDirection();
-    }
-
     snake.update();
 }
 
@@ -392,6 +408,13 @@ function drawRect(pos, scale, color){
     ctx.beginPath();
     ctx.fillStyle = color;
     ctx.fillRect(pos.x, pos.y, scale.x, scale.y);
+    ctx.fill();
+}
+
+function drawRoundRect(pos, scale, round, color){
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.roundRect(pos.x, pos.y, scale.x, scale.y, round);
     ctx.fill();
 }
 
