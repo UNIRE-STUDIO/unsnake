@@ -4,6 +4,8 @@
 
 - Выбор скорости змейки
 
+- Добавить стены
+
 */
 
 // ЗАГРУЗКА ИЗОБРАЖЕНИЙ ...........................................
@@ -64,27 +66,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // ПОЛЬЗОВАТЕЛЬСКИЙ ВВОД ..........................................
 
-var gamepad = document.getElementById("gamepadCont");
+// Свайпы .......................................................
 
-var LeftButton = document.getElementById("left");
-LeftButton.ontouchstart = function () {
-    control.dir = 1;
-}
+var xStartTochPos = 0;
+var yStartTochPos = 0;
 
-var UpButton = document.getElementById("up");
-UpButton.ontouchstart = function () {
-    control.dir = 2;
-}
+canvas.addEventListener('touchstart', function (e) {
+    xStartTochPos = e.changedTouches[0].clientX;
+    yStartTochPos = e.changedTouches[0].clientY;
+});
 
-var RightButton = document.getElementById("right");
-RightButton.ontouchstart = function () {
-    control.dir = 3;
-}
+canvas.addEventListener("touchend", function (e) {
+    var xEnd = e.changedTouches[0].clientX;
+    var yEnd = e.changedTouches[0].clientY;
 
-var DownButton = document.getElementById("down");
-DownButton.ontouchstart = function () {
-    control.dir = 4;
-}
+    var absMoveX = Math.abs(xEnd - xStartTochPos);
+    var absMoveY = Math.abs(yEnd - yStartTochPos);
+
+    // Если длина свайпа меньше (50) то пропускаем
+    if (absMoveX < 50 && absMoveY < 50) return;
+
+    if (Math.abs(xEnd - xStartTochPos) > Math.abs(yEnd - yStartTochPos)){
+        control.dir = xEnd - xStartTochPos > 0 ? 3 : 1
+    }
+    else{
+        control.dir = yEnd - yStartTochPos > 0 ? 4 : 2
+    }
+
+        // Если игрок меняет направление змейки впервой половине
+    // клеточки то поворачиваем сразу, если нет то поворот произойдет
+    // при достижении следующей
+    if (glManager.lag < glManager.ms_per_update / 2 && !control.isBlockChangeSnakeDirection) {
+        control.snakeDirection();
+        control.isBlockChangeSnakeDirection = true; // Разрешаем только один раз менять направление
+        // сбрасываем флаг в update.
+        // Иначе змейка может разверутся на 180 градусов
+        // в пределах клетки
+    }
+});
+
+
+
+
+//////////////////////////////////////////////////////////////////
 
 // Отлавливаев клики мышкой
 document.addEventListener('click', function (evt) {
@@ -199,8 +223,10 @@ var config = {
     stepOfMovementSnake: 16, // Шаг движения змейки
 
     updateConfigForAndroid() {
-        glManager.ms_per_update = 166;
-        config.grid = 48;
+        glManager.ms_per_update = 160;
+        config.stepOfMovementSnake = 56;
+        config.grid = 56;
+        snake.roundRect = 13;
         canvas.width = Math.floor((window.innerWidth) / config.grid) * config.grid - config.grid;
         canvas.height = Math.floor(((window.innerHeight * 60) / 100) / config.grid) * config.grid;
     }
@@ -215,8 +241,9 @@ var snake = {
     startCountCells: 10,
     countCells: 0,
     roundRect: 5,
+    startPosition: 224,
     resetToStart() {
-        snake.position = { x: 192, y: 192 };
+        snake.position = { x: snake.startPosition, y: snake.startPosition };
         snake.cells = [];
         for (let i = 0; i < snake.startCountCells; i++) {
             // Добавляет новый элемент массива в новую координату текущего положения змейки
