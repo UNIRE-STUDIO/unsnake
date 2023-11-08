@@ -9,7 +9,7 @@
 
             // В зависимости от устройства подключаем разные таблицы стилей
             var uagent = navigator.userAgent.toLowerCase();
-            let currentStyle = (uagent.search("android") > -1) ? mobileStyle : main;
+            let currentStyle = (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) ? mobileStyle : main;
             if (!document.getElementById(cssId))
                 {
                     var head  = document.getElementsByTagName('head')[0];
@@ -46,7 +46,7 @@
                     </div>
                     <div class="footer">
                         <span id="size-map">100х100</span>
-                        <span id="version">версия: 0.1.1</span>
+                        <span id="version">версия: 0.1.2</span>
                     </div>
                 </div>
         </div>

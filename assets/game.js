@@ -42,7 +42,7 @@ var uagent = navigator.userAgent.toLowerCase();
 // ЗАГРУЗКА ДОКУМЕНТА ..........................................
 document.addEventListener('DOMContentLoaded', function () {
 
-    if (uagent.search("android") > -1) {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
         config.updateConfigForAndroid();         //  Меняем настройки под мобильный телефон
     }
     else {
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
         else if (window.innerWidth < 700) canvas.width = 544;
     }
 
-    document.getElementById("size-map").innerHTML = canvas.width / 16 + "x" + canvas.height / 16
+    document.getElementById("size-map").innerHTML = canvas.width / config.grid + "x" + canvas.height / config.grid
 
     game.startGame();
     glManager.gameLoop();
@@ -76,7 +76,7 @@ canvas.addEventListener('touchstart', function (e) {
     yStartTochPos = e.changedTouches[0].clientY;
 });
 
-canvas.addEventListener("touchend", function (e) {
+canvas.addEventListener("touchmove", function(e){
     var xEnd = e.changedTouches[0].clientX;
     var yEnd = e.changedTouches[0].clientY;
 
@@ -92,8 +92,10 @@ canvas.addEventListener("touchend", function (e) {
     else{
         control.dir = yEnd - yStartTochPos > 0 ? 4 : 2
     }
+    xStartTochPos = e.changedTouches[0].clientX;
+    yStartTochPos = e.changedTouches[0].clientY;
 
-        // Если игрок меняет направление змейки впервой половине
+    // Если игрок меняет направление змейки впервой половине
     // клеточки то поворачиваем сразу, если нет то поворот произойдет
     // при достижении следующей
     if (glManager.lag < glManager.ms_per_update / 2 && !control.isBlockChangeSnakeDirection) {
@@ -104,9 +106,6 @@ canvas.addEventListener("touchend", function (e) {
         // в пределах клетки
     }
 });
-
-
-
 
 //////////////////////////////////////////////////////////////////
 

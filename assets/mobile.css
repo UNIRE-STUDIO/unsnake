@@ -65,12 +65,12 @@ body{
     color: #c2c2c2;
     -moz-user-select: none;    -o-user-select: none;    -khtml-user-select: none;    -webkit-user-select: none;    user-select: none;
 
-    box-shadow:0px -2px 0 #ac0513 inset;
+    box-shadow:0px -5px 0 #ac0513 inset;
     transition:all 0.3s;
 }
 
 #pause:hover {
-    box-shadow:0px -4px 0 #ac0513 inset;
+    box-shadow:0px -8px 0 #ac0513 inset;
     cursor: pointer;
 }
 
