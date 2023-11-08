@@ -160,6 +160,8 @@ var control = {
     isBlockChangeSnakeDirection: false, //
     snakeDirection() {
         if (control.dir === 0) return;
+        control.isBlockChangeSnakeDirection = true; // при повороте запрещаем змейке изменять 
+                                                    // направление на половине блока до следующего update
 
         if (control.dir === 1 && snake.direction.x === 0) { // Кнопка влево нажата и змейка не перемещается
             snake.direction.x = -config.stepOfMovementSnake;                      // по горизонтали
@@ -410,8 +412,8 @@ var glManager = {
 function update() {
     if (game.isPause) return;
     snake.update();
+    control.isBlockChangeSnakeDirection = false; //
     control.snakeDirection();
-    control.isBlockChangeSnakeDirection = false; // 
 }
 
 function render() {
