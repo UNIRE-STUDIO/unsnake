@@ -34,19 +34,22 @@
                             <span id="recordCounter">РЕКОРД: 0</span>
                         </div>
                         <div><span id="scoreCounter">0</span></div>
-                        <button id="pause" name="pause" type="button">||</button>
+                        <button class="button" id="pause-button" name="pause" type="button">||</button>
                     </div>
                     <div class="canvas-wrapper">
                         <canvas id="myCanvas" width="640" height="448"></canvas>
-                        <button id="continue" name="continue" type="button">ПРОДОЛЖИТЬ</button>
-                        <div id="game-over">
-                            <p id="you-lose">Вы проиграли</p>
-                            <button id="restart" name="restart" type="button">РЕСТАРТ</button>
+                        <div class="panel" id="pause-panel">
+                            <p class="panel-label">Пауза</p>
+                            <button class="button" id="continue-button" name="continue" type="button">ПРОДОЛЖИТЬ</button> 
+                        </div>
+                        <div class="panel" id="game-over-panel">
+                            <p class="panel-label" id="you-lose">Вы проиграли</p>
+                            <button class="button" id="restart-button" name="restart" type="button">РЕСТАРТ</button>
                         </div>
                     </div>
                     <div class="footer">
-                        <span id="size-map">100х100</span>
-                        <span id="version">версия: 1.3</span>
+                        <span class="footer-label" id="size-map">100х100</span>
+                        <span class="footer-label" id="version">версия: 1.4</span>
                     </div>
                 </div>
         </div>

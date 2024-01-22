@@ -1,7 +1,5 @@
 /*
 
-- Исправить возможность разворота на 180 градусов в пределах клетки
-
 - Выбор скорости змейки
 
 - Добавить стены
@@ -22,18 +20,18 @@ var scoreCounter = document.querySelector(".game-header div #scoreCounter");
 var recordCounter = document.querySelector(".game-header .hud #recordCounter");
 
 // Пауза
-var buttonPause = document.getElementById("pause");
+var buttonPause = document.getElementById("pause-button");
 buttonPause.onclick = function () {
     game.pauseIsActive(!game.isPause);
 }
-var buttonContinue = document.getElementById("continue");
-buttonContinue.onclick = function () {
+
+var pausePanel = document.getElementById("pause-panel");
+document.getElementById("continue-button").onclick = function () {
     game.pauseIsActive(false);
 }
 
-var gameOverPanel = document.getElementById("game-over");
-var buttonRestart = document.getElementById("restart");
-buttonRestart.onclick = function () {
+var gameOverPanel = document.getElementById("game-over-panel");
+document.getElementById("restart-button").onclick = function () {
     game.startGame();
 }
 
@@ -121,7 +119,7 @@ document.addEventListener('click', function (evt) {
 
 // Отлавливаев ввод с клавиатуры
 document.addEventListener('keydown', function (e) {
-    if (e.keyCode === 32) {
+    if (e.keyCode === 32 || e.keyCode === 80) {
         game.pauseIsActive(!game.isPause);
     }
     if (game.isPause) return;
@@ -189,7 +187,7 @@ var game = {
 
     pauseIsActive(flag) {
         this.isPause = flag;
-        buttonContinue.style.display = flag ? "block" : "none";
+        pausePanel.style.display = flag ? "block" : "none";
         buttonPause.style.display = !flag ? "" : "none";
     },
     startGame() {
